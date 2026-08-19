@@ -194,6 +194,20 @@ The project uses demo data and labels demo functionality appropriately.
 
 ---
 
+## Reference Materials
+
+The repository also contains the FrostCart design and interaction specifications
+used as implementation references:
+
+- `01_UI_Design.pdf`
+- `02_Easter_Egg.pdf`
+- `03_Cart_UI.pdf`
+
+These documents define the original UI, interaction, and cart requirements for
+the prototype.
+
+---
+
 ## Tech Stack
 
 * React
