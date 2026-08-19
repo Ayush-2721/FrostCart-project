@@ -85,13 +85,13 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutStage, setCheckoutStage] = useState('cart');
   const [profileOpen, setProfileOpen] = useState(false);
+  const [eggUnlocked, setEggUnlocked] = useState(false);
   const [toast, setToast] = useState('');
   const [eggOpen, setEggOpen] = useState(false);
   const [eggClosing, setEggClosing] = useState(false);
   const [logoPulse, setLogoPulse] = useState(false);
   const logoClicks = useRef(0);
   const logoTimer = useRef(null);
-  const eggLock = useRef(false);
   const cartTriggerRef = useRef(null);
   const profileRef = useRef(null);
   const profileCloseTimer = useRef(null);
@@ -136,14 +136,13 @@ export default function App() {
   }, [profileOpen]);
 
   function handleLogoClick() {
-    if (eggLock.current) return;
+    if (eggUnlocked) return;
     setLogoPulse(true);
     window.setTimeout(() => setLogoPulse(false), 120);
     logoClicks.current += 1;
     clearTimeout(logoTimer.current);
-    if (logoClicks.current === 5) {
-      logoClicks.current = 0;
-      eggLock.current = true;
+    if (logoClicks.current >= 5) {
+      setEggUnlocked(true);
       setEggOpen(true);
       setEggClosing(false);
       return;
@@ -160,7 +159,8 @@ export default function App() {
     eggCloseTimer.current = window.setTimeout(() => {
       setEggOpen(false);
       setEggClosing(false);
-      eggLock.current = false;
+      setEggUnlocked(false);
+      logoClicks.current = 0;
     }, 220);
   }
 
@@ -296,7 +296,7 @@ export default function App() {
 
       {toast && <div className="toast" role="status"><Check size={17} /> {toast}</div>}
       {cartOpen && <CartDrawer cart={cart} itemCount={itemCount} subtotal={subtotal} onClose={closeCart} onUpdate={updateQuantity} onRemove={removeItem} checkoutStage={checkoutStage} onStartCheckout={() => setCheckoutStage('checkout')} onBackToCart={() => setCheckoutStage('cart')} onConfirmDemoOrder={() => setCheckoutStage('confirmed')} />}
-      {eggOpen && <div className={`egg-overlay ${eggClosing ? 'egg-overlay-closing' : ''}`} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeEgg(); }}><section className={`egg-panel ${eggClosing ? 'egg-panel-closing' : ''}`} role="dialog" aria-modal="true" aria-labelledby="egg-title"><button onClick={closeEgg} className="egg-close" aria-label="Close freezer reward"><X size={20} /></button><div className="egg-glow"><Snowflake size={36} /></div><div className="egg-freezer"><div className="egg-door"><span>FROST</span></div><div className="egg-inside"><Snowflake size={28} /></div></div><h2 id="egg-title">Freezer unlocked.</h2><p>You found the cold side of FrostCart.</p><button onClick={closeEgg} className="primary-button mx-auto mt-6">Keep shopping <ArrowRight size={16} /></button></section></div>}
+      {eggOpen && <div className={`egg-overlay ${eggClosing ? 'egg-overlay-closing' : ''}`} role="presentation"><section className={`egg-panel ${eggClosing ? 'egg-panel-closing' : ''}`} role="dialog" aria-modal="true" aria-labelledby="egg-title"><button onClick={closeEgg} className="egg-close" aria-label="Close freezer reward"><X size={20} /></button><div className="egg-glow"><Snowflake size={36} /></div><div className="egg-freezer"><div className="egg-door"><span>FROST</span></div><div className="egg-inside"><Snowflake size={28} /></div></div><h2 id="egg-title">Freezer unlocked.</h2><p>You found the cold side of FrostCart.</p><button onClick={closeEgg} className="primary-button mx-auto mt-6">Keep shopping <ArrowRight size={16} /></button></section></div>}
     </div>
   );
 }
